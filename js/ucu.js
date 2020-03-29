@@ -10,134 +10,131 @@
 // 2. Validate each input on the fly using onchange event
 // 3. Define re-usable validators: length, format,  
 
-function validateEmail(){
-  const emailNode = event.target.elements['email'];
-  const emailErrorNode = emailNode.parentNode.querySelector('p.help-block')
-  emailErrorNode.innerHTML = '';
-
-  let emailErrors = document.createElement('ul');
-  emailErrors.setAttribute("role", "alert");
-
-  if (emailNode.value.length < 5 ) {
-    let li = document.createElement('li');
-    li.innerText = 'Email is too short';
-    emailErrors.appendChild(li)
-  }
-
-  if (emailNode.value.length > 50 ) {
-    let li = document.createElement('li');
-    li.innerText = 'Email is too long';
-    emailErrors.appendChild(li)
-  }
-
-  if (!emailNode.value.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
-    let li = document.createElement('li');
-    li.innerText = 'Email format is incorrect';
-    emailErrors.appendChild(li)
-  }
-
-  if (emailErrors.childElementCount > 0) {
-    emailErrorNode.appendChild(emailErrors)
-    // return false;
-  }
-  // return true;
+function lengthValid(node, errors, lowLimit = false, upperLimit = false) {
+    if (lowLimit) {
+        if (node.value.length < lowLimit) {
+            let li = document.createElement('li');
+            li.innerText = 'Item is too short';
+            errors.appendChild(li)
+        }
+    }
+    if (upperLimit) {
+        if (node.value.length > upperLimit) {
+            let li = document.createElement('li');
+            li.innerText = 'Item is too long';
+            errors.appendChild(li)
+        }
+    }
 
 }
 
-function validateName(){
-  const nameNode = event.target.elements['name'];
-  const nameErrorNode = nameNode.parentNode.querySelector('p.help-block')
-  nameErrorNode.innerHTML = '';
-
-  let nameErrors = document.createElement('ul');
-  nameErrors.setAttribute("role", "alert");
-
-  if (nameNode.value.length < 5 ) {
-    let li = document.createElement('li');
-    li.innerText = 'Name is too short';
-    nameErrors.appendChild(li)
-  }
-
-  if(!nameNode.value.match(/^\w+$/) && !nameNode.value.match(/^\w+\s\s\w+$/)){
-    let li = document.createElement('li');
-    li.innerText = 'Name has to have 0 or 2 whitespaces';
-    nameErrors.appendChild(li)
-    
-  }
-  if (nameErrors.childElementCount > 0) {
-    nameErrorNode.appendChild(nameErrors)
-  }
-}
-
-
-function validatePhone(){
-  const phoneNode = event.target.elements['phone'];
-  const phoneErrorNode = phoneNode.parentNode.querySelector('p.help-block')
-  phoneErrorNode.innerHTML = '';
-
-  let phoneErrors = document.createElement('ul');
-  phoneErrors.setAttribute("role", "alert");
-
-  if (phoneNode.value.match(/\d+/g).join("").length < 12) {
-    let li = document.createElement('li');
-    li.innerText = 'Phone number is too short';
-    phoneErrors.appendChild(li)
-  }
-
-  if (!phoneNode.value.match(/^[+0]380(\(32\)|32)( \d{3}|-\d{3})( \d{2}|-\d{2})( \d{2}|-\d{2})$/)){
-    let li = document.createElement('li');
-    li.innerText = 'Phone number not in correct form';
-    phoneErrors.appendChild(li)
-  }
- 
-  if (phoneErrors.childElementCount > 0) {
-    phoneErrorNode.appendChild(phoneErrors)
-  }
+function formatValid(node, errors, format) {
+    if (!node.value.match(format)) {
+        let li = document.createElement('li');
+        li.innerText = 'Format is incorrect';
+        errors.appendChild(li)
+    }
 
 }
 
-function validateMessage(){
-  const messageNode = event.target.elements['message'];
-  const messageErrorNode = messageNode.parentNode.querySelector('p.help-block')
-  messageErrorNode.innerHTML = '';
+function validateEmail() {
+    const emailNode = event.target.elements['email'];
+    const emailErrorNode = emailNode.parentNode.querySelector('p.help-block')
+    emailErrorNode.innerHTML = '';
 
-  let messageErrors = document.createElement('ul');
-  messageErrors.setAttribute("role", "alert");
+    let emailErrors = document.createElement('ul');
+    emailErrors.setAttribute("role", "alert");
 
-  if (messageNode.value.length < 10) {
-    let li = document.createElement('li');
-    li.innerText = 'Message is too short';
-    messageErrors.appendChild(li)
-  }
 
-  if (messageNode.value.match(/\b(.*ugly|.*dumm|.*stupid|.*pig|.*ignorant)\b/g) ) {    
-    let li = document.createElement('li');
-    li.innerText = 'Message cannot contain bad words';
-    messageErrors.appendChild(li)
-  }
+    lengthValid(emailNode, emailErrors, 5, 50);
+    formatValid(emailNode, emailErrors, /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
- 
-  if (messageErrors.childElementCount > 0) {
-    messageErrorNode.appendChild(messageErrors)
-  }
+    if (emailErrors.childElementCount > 0) {
+        emailErrorNode.appendChild(emailErrors)
+    }
+
+}
+
+function validateName() {
+    const nameNode = event.target.elements['name'];
+    const nameErrorNode = nameNode.parentNode.querySelector('p.help-block')
+    nameErrorNode.innerHTML = '';
+
+    let nameErrors = document.createElement('ul');
+    nameErrors.setAttribute("role", "alert");
+
+
+    lengthValid(nameNode, nameErrors, 1);
+
+    if (!nameNode.value.match(/^\w+$/) && !nameNode.value.match(/^\w+\s\s\w+$/)) {
+        let li = document.createElement('li');
+        li.innerText = 'Name has to have 0 or 2 whitespaces';
+        nameErrors.appendChild(li)
+
+    }
+    if (nameErrors.childElementCount > 0) {
+        nameErrorNode.appendChild(nameErrors)
+    }
+}
+
+
+function validatePhone() {
+    const phoneNode = event.target.elements['phone'];
+    const phoneErrorNode = phoneNode.parentNode.querySelector('p.help-block')
+    phoneErrorNode.innerHTML = '';
+
+    let phoneErrors = document.createElement('ul');
+    phoneErrors.setAttribute("role", "alert");
+
+    if (phoneNode.value.match(/\d+/g).join("").length < 12) {
+        let li = document.createElement('li');
+        li.innerText = 'Phone number is too short';
+        phoneErrors.appendChild(li)
+    }
+
+    formatValid(phoneNode, phoneErrors, /^[+0]380(\(32\)|32)( \d{3}|-\d{3})( \d{2}|-\d{2})( \d{2}|-\d{2})$/);
+
+    if (phoneErrors.childElementCount > 0) {
+        phoneErrorNode.appendChild(phoneErrors)
+    }
+
+}
+
+function validateMessage() {
+    const messageNode = event.target.elements['message'];
+    const messageErrorNode = messageNode.parentNode.querySelector('p.help-block')
+    messageErrorNode.innerHTML = '';
+
+    let messageErrors = document.createElement('ul');
+    messageErrors.setAttribute("role", "alert");
+
+
+    lengthValid(messageNode, messageErrors, 10);
+
+    if (messageNode.value.match(/\b(.*ugly|.*dumm|.*stupid|.*pig|.*ignorant)\b/g)) {
+        let li = document.createElement('li');
+        li.innerText = 'Message cannot contain bad words';
+        messageErrors.appendChild(li)
+    }
+
+
+    if (messageErrors.childElementCount > 0) {
+        messageErrorNode.appendChild(messageErrors)
+    }
 
 }
 
 function validateMe(event) {
-  event.preventDefault();
-
-  validateMessage();
-  validatePhone();
+    event.preventDefault();
+    validateName();
 
 
+    validateMessage();
+    validatePhone();
+
+    validateEmail();
 
 
-  
-  validateName();
-  validateEmail();
-  
-
-
-  return false;
+    return false;
 }
 
